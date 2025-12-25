@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.30;
 
-import "openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
+import "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
 import "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
-interface IKYCRegistry {
+interface IKYC {
   function isKYCed(address user) external view returns (bool);
 }
 
@@ -20,20 +20,20 @@ interface IYieldNoteNFT {
   function markAsSettled(uint256 tokenId) external;
 }
 
-contract YieldNoteNFT is ReentrancyGuard {
+contract AgriVault is ReentrancyGuard {
   IERC20 public immutable paymentToken;
-  IKYCRegistry public immutable kycRegistry;
+  IKYC public immutable kycRegistry;
   IYieldNoteNFT public immutable yieldNoteNFT;
 
   address public owner;
 
-  mapping(uint256 => bool) public founded;
+  mapping(uint256 => bool) public funded;
 
   event Deposited(address indexed investor, uint256 indexed tokenId, uint256 amount);
   event Settled(
     address indexed investor,
-    uint256 indexed tokenId, 
-    uint256 principal, 
+    uint256 indexed tokenId,
+    uint256 principal,
     uint256 yieldAmount
   );
 
@@ -57,7 +57,7 @@ contract YieldNoteNFT is ReentrancyGuard {
     require(_yieldNoteNFT != address(0), "Invalid YieldNote");
 
     paymentToken = IERC20(_paymentToken);
-    kycRegistry = IKYCRegistry(_kycRegistry);
+    kycRegistry = IKYC(_kycRegistry);
     yieldNoteNFT = IYieldNoteNFT(_yieldNoteNFT);
 
     owner = msg.sender;
@@ -65,7 +65,7 @@ contract YieldNoteNFT is ReentrancyGuard {
 
   // investor deposits principal for a Yield Note
   function deposit(uint256 tokenId) external nonReentrant onlyKYCed(msg.sender) {
-    require(!founded[tokenId], "Already funded");
+    require(!funded[tokenId], "Already funded");
     require(yieldNoteNFT.ownerOf(tokenId) == msg.sender, "Not the owner");
     (
       uint256 principal,
@@ -74,7 +74,7 @@ contract YieldNoteNFT is ReentrancyGuard {
       ,
       bool settled
     ) = yieldNoteNFT.getYieldNote(tokenId);
-    
+
     require(!settled, "Already settled");
 
     funded[tokenId] = true;
@@ -90,7 +90,7 @@ contract YieldNoteNFT is ReentrancyGuard {
       uint256 principal,
       uint256 yieldRate,
       ,
-      uint256 maturit,
+      uint256 maturity,
       bool settled
     ) = yieldNoteNFT.getYieldNote(tokenId);
 

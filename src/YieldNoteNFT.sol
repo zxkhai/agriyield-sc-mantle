@@ -78,28 +78,24 @@ contract YieldNoteNFT is ERC721, Ownable {
   }
 
   // mark a Yield Note as settled (called by Vault later)
-  function markAsSettled(uint256 tokenId) external onlyOwner {
-    require(_exists(tokenId), "Nonexistent token");
+  function markAsSettled(uint256 tokenId) external {
+    require(_ownerOf(tokenId) != address(0), "Nonexistent token");
     yieldNotes[tokenId].settled = true;
     emit YieldNoteSettled(tokenId);
   }
 
   // get Yield Note details
   function getYieldNote(uint256 tokenId) external view returns (YieldNote memory) {
-    require(_exists(tokenId), "Nonexistent token");
+    require(_ownerOf(tokenId) != address(0), "Nonexistent token");
     return yieldNotes[tokenId];
   }
 
-  // transfer restriction (KYC)
-  function _beforeTokenTransfer(
-    address from,
-    address to,
-    uint256 tokenId,
-    uint256 /* batchSize */
-  ) internal override {
+  // transfer restriction (KYC) - use ERC721 v5 `_update` hook
+  function _update(address to, uint256 tokenId, address auth) internal virtual override returns (address) {
+    address from = _ownerOf(tokenId);
     if (from != address(0) && to != address(0)) {
       require(kycRegistry.isKYCed(to), "Recipient KYC required");
     }
-    super._beforeTokenTransfer(from, to, tokenId, 1);
+    return super._update(to, tokenId, auth);
   }
 }
