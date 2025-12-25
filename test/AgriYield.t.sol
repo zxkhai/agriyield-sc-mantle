@@ -47,6 +47,9 @@ contract AgriYieldTest is Test {
       address(yieldNote)
     );
 
+    // Fund vault to cover yields
+    usdc.transfer(address(vault), 200_000e6);
+
     // Fund investor
     usdc.transfer(investor, 10_000e6);
   }
@@ -104,9 +107,10 @@ contract AgriYieldTest is Test {
       30 days
     );
 
-    vm.prank(investor);
+    vm.startPrank(investor);
     usdc.approve(address(vault), 1_000e6);
     vault.deposit(tokenId);
+    vm.stopPrank();
 
     vm.expectRevert("Not matured");
     vault.settle(tokenId); // should revert
