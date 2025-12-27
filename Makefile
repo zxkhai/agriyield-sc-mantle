@@ -1,12 +1,17 @@
-.PHONY: test test-units test-kyc test-yield test-vault
+.PHONY: test test-units test-integration test-kyc test-yield test-vault
 
 # Run all tests
-test:
+test-all:
 	forge test
 
-# Run only unit tests
-test-units:
-	./test-units.sh
+
+# Run main test agriyield smart contracts
+test:
+	forge test test/AgriYield.t.sol
+
+test-verb:
+	forge test test/AgriYield.t.sol -vvvv
+
 
 # Run individual unit tests
 test-kyc:
