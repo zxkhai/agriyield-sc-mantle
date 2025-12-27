@@ -2,22 +2,8 @@
 pragma solidity ^0.8.30;
 
 import "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
-
-interface IKYCRegistry {
-  function isKYCed(address user) external view returns (bool);
-}
-
-interface IYieldNoteNFT {
-  function ownerOf(uint256 tokenId) external view returns (address);
-  function getYieldNote(uint256 tokenId) external view returns (
-    uint256 principal,
-    uint256 yieldRate,
-    uint256 startDate,
-    uint256 maturityDate,
-    bool settled
-  );
-  function markAsSettled(uint256 tokenId) external;
-}
+import "./interfaces/IKYCRegistry.sol";
+import "./interfaces/IYieldNoteNFT.sol";
 
 contract AgriVault is ReentrancyGuard {
   IKYCRegistry public immutable kycRegistry;

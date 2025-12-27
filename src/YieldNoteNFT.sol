@@ -3,10 +3,7 @@ pragma solidity ^0.8.30;
 
 import "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
-
-interface IKYCRegistry {
-  function isKYCed(address user) external view returns (bool);
-}
+import "./interfaces/IKYCRegistry.sol";
 
 contract YieldNoteNFT is ERC721, Ownable {
   
