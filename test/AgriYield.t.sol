@@ -256,7 +256,7 @@ contract AgriYieldTest is Test {
     assertEq(investor2.balance, 1050);
   }
 
-  function testContractOwnership() public {
+  function testContractOwnership() public view {
     // Test that contracts have correct owners
     assertEq(kycRegistry.owner(), owner);
     assertEq(yieldNoteNFT.owner(), owner);

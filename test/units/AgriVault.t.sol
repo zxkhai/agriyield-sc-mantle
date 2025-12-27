@@ -33,7 +33,7 @@ contract AgriVaultTest is Test {
     failingReceiver = new FailingReceiver();
   }
 
-  function testConstructor() public {
+  function testConstructor() public view {
     assertEq(address(vault.kycRegistry()), address(mockKYC));
     assertEq(address(vault.yieldNoteNFT()), address(mockNFT));
     assertEq(vault.owner(), owner);

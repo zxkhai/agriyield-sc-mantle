@@ -21,7 +21,7 @@ contract YieldNoteNFTTest is Test {
     yieldNoteNFT = new YieldNoteNFT(address(mockKYC));
   }
 
-  function testConstructor() public {
+  function testConstructor() public view {
     assertEq(address(yieldNoteNFT.kycRegistry()), address(mockKYC));
     assertEq(yieldNoteNFT.owner(), owner);
   }
@@ -43,11 +43,11 @@ contract YieldNoteNFTTest is Test {
     assertEq(yieldNoteNFT.nextTokenId(), 1);
 
     (
-        uint256 principal,
-        uint256 yieldRate,
-        uint256 startDate,
-        uint256 maturityDate,
-        bool settled
+      uint256 principal,
+      uint256 yieldRate,
+      uint256 startDate,
+      uint256 maturityDate,
+      bool settled
     ) = yieldNoteNFT.getYieldNote(tokenId);
 
     assertEq(principal, 1000);
