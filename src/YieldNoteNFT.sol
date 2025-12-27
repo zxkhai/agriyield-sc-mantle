@@ -85,9 +85,16 @@ contract YieldNoteNFT is ERC721, Ownable {
   }
 
   // get Yield Note details
-  function getYieldNote(uint256 tokenId) external view returns (YieldNote memory) {
+  function getYieldNote(uint256 tokenId) external view returns (
+    uint256 principal,
+    uint256 yieldRate,
+    uint256 startDate,
+    uint256 maturityDate,
+    bool settled
+  ) {
     require(_ownerOf(tokenId) != address(0), "Nonexistent token");
-    return yieldNotes[tokenId];
+    YieldNote memory note = yieldNotes[tokenId];
+    return (note.principal, note.yieldRate, note.startDate, note.maturityDate, note.settled);
   }
 
   // transfer restriction (KYC) - use ERC721 v5 `_update` hook
