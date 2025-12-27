@@ -2,9 +2,8 @@
 pragma solidity ^0.8.30;
 
 import "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
-import "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
-interface IKYC {
+interface IKYCRegistry {
   function isKYCed(address user) external view returns (bool);
 }
 
@@ -21,8 +20,7 @@ interface IYieldNoteNFT {
 }
 
 contract AgriVault is ReentrancyGuard {
-  IERC20 public immutable paymentToken;
-  IKYC public immutable kycRegistry;
+  IKYCRegistry public immutable kycRegistry;
   IYieldNoteNFT public immutable yieldNoteNFT;
 
   address public owner;
@@ -38,7 +36,7 @@ contract AgriVault is ReentrancyGuard {
   );
 
   modifier onlyOwner() {
-    require(msg.sender == owner, "Not the owner");
+    require(msg.sender == owner, "Not owner");
     _;
   }
 
@@ -47,17 +45,11 @@ contract AgriVault is ReentrancyGuard {
     _;
   }
 
-  constructor (
-    address _paymentToken,
-    address _kycRegistry,
-    address _yieldNoteNFT
-  ) {
-    require(_paymentToken != address(0), "Invalid token");
+  constructor (address _kycRegistry, address _yieldNoteNFT) {
     require(_kycRegistry != address(0), "Invalid KYC");
     require(_yieldNoteNFT != address(0), "Invalid YieldNote");
 
-    paymentToken = IERC20(_paymentToken);
-    kycRegistry = IKYC(_kycRegistry);
+    kycRegistry = IKYCRegistry(_kycRegistry);
     yieldNoteNFT = IYieldNoteNFT(_yieldNoteNFT);
 
     owner = msg.sender;
@@ -78,7 +70,6 @@ contract AgriVault is ReentrancyGuard {
     require(!settled, "Already settled");
 
     funded[tokenId] = true;
-    require(paymentToken.transferFrom(msg.sender, address(this), principal), "Transfer failed");
 
     emit Deposited(msg.sender, tokenId, principal);
   }
@@ -104,7 +95,8 @@ contract AgriVault is ReentrancyGuard {
 
     yieldNoteNFT.markAsSettled(tokenId);
 
-    require(paymentToken.transfer(investor, totalPayout), "Transfer failed");
+    (bool success, ) = investor.call{value: totalPayout}("");
+    require(success, "Payout failed");
 
     emit Settled(investor, tokenId, principal, yieldAmount);
   }
