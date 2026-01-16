@@ -54,6 +54,6 @@ deploy:
 
 # Verify contracts on Mantle Explorer
 verify:
-	forge verify-contract --chain mantle-sepolia $(KYC_REGISTRY_ADDRESS) src/KYCRegistry.sol:KYCRegistry $(ETHERSCAN_API_KEY)
-	forge verify-contract --chain mantle-sepolia $(YIELD_NOTE_NFT_ADDRESS) src/YieldNote.sol:YieldNote $(ETHERSCAN_API_KEY)
-	forge verify-contract --chain mantle-sepolia $(AGRI_VAULT_ADDRESS) src/AgriVault.sol:AgriVault $(ETHERSCAN_API_KEY)
+	forge verify-contract $(KYC_REGISTRY_ADDRESS) src/KYCRegistry.sol:KYCRegistry --chain 5003 --watch  
+	forge verify-contract $(YIELD_NOTE_NFT_ADDRESS) src/YieldNoteNFT.sol:YieldNoteNFT --chain 5003 --watch
+	forge verify-contract $(AGRI_VAULT_ADDRESS) src/AgriVault.sol:AgriVault --chain 5003 --watch
