@@ -3,6 +3,9 @@ ifneq (,$(wildcard .env))
 	PRIVATE_KEY := $(shell grep '^PRIVATE_KEY=' .env | cut -d'=' -f2- | tr -d '"')
 	MANTLE_SEPOLIA_RPC := $(shell grep '^MANTLE_SEPOLIA_RPC=' .env | cut -d'=' -f2- | tr -d '"')
 	ETHERSCAN_API_KEY := $(shell grep '^ETHERSCAN_API_KEY=' .env | cut -d'=' -f2- | tr -d '"')
+	KYC_REGISTRY_ADDRESS := $(shell grep '^KYC_REGISTRY_ADDRESS=' .env | cut -d'=' -f2- | tr -d '"')
+	YIELD_NOTE_NFT_ADDRESS := $(shell grep '^YIELD_NOTE_NFT_ADDRESS=' .env | cut -d'=' -f2- | tr -d '"')
+	AGRI_VAULT_ADDRESS := $(shell grep '^AGRI_VAULT_ADDRESS=' .env | cut -d'=' -f2- | tr -d '"')
 endif
 
 .PHONY: test test-units test-integration test-kyc test-yield test-vault
