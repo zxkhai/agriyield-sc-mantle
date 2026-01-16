@@ -1,3 +1,10 @@
+ifneq (,$(wildcard .env))
+	# Read .env file and set variables
+	PRIVATE_KEY := $(shell grep '^PRIVATE_KEY=' .env | cut -d'=' -f2- | tr -d '"')
+	MANTLE_SEPOLIA_RPC := $(shell grep '^MANTLE_SEPOLIA_RPC=' .env | cut -d'=' -f2- | tr -d '"')
+	ETHERSCAN_API_KEY := $(shell grep '^ETHERSCAN_API_KEY=' .env | cut -d'=' -f2- | tr -d '"')
+endif
+
 .PHONY: test test-units test-integration test-kyc test-yield test-vault
 
 # Run main test agriyield smart contracts
@@ -35,9 +42,11 @@ gas:
 
 # Deploy contracts
 deploy-dry:
+	@echo "Using RPC: $(MANTLE_SEPOLIA_RPC)"
 	forge script script/DAgriYield.s.sol:DeployAgriYield --rpc-url $(MANTLE_SEPOLIA_RPC)
 
 deploy:
+	@echo "Using RPC: $(MANTLE_SEPOLIA_RPC)"
 	forge script script/DAgriYield.s.sol:DeployAgriYield --rpc-url $(MANTLE_SEPOLIA_RPC) --broadcast -vvvv
 
 # Verify contracts on Mantle Explorer
